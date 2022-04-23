@@ -1,4 +1,4 @@
-import { getGlobal, getDispatch } from "reactn";
+import { getGlobal } from "reactn";
 import { useMutation } from "react-query";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -22,32 +22,20 @@ const makeRequest = async (useMethod, url, payload = null) => {
         const method = useMethod.toLowerCase();
         const config = {
             method,
-            url: `http://localhost:3001${url}`,
+            url: `${url}`,
+            // url: `http://localhost:3001${url}`,
             headers: getTokenHeader(),
         }
 
         if (method !== "get" && payload) {
             config.data = payload;
         }
-
+        
         const response = await axios(config);
-        console.log(response);
+        return response;
 
-        return response.data;
     } catch (err) {
-        console.log(err.response.status);
-
-        const logout = getDispatch.logout;
-
-        if (err.response.status === 401 || err.response.status === 403) {
-            logout()
-        }
-
-        if (err.response.data && err.response.data.msg) {
-            throw new Error(
-                "Unknown error encountered. Please refresh the page and try again."
-            );
-        }
+        console.log(err)
     }
 }
 
@@ -60,21 +48,28 @@ export const useApiPost = (url, callback, opts = {}) => {
 }
 
 export const login = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
 
-    const response = await axios(config);
+    // const response = await axios(config);
+    console.log(payload)
+    const response = await makeRequest(useMethod, url, payload);
 
     if (response) {
         if (!response.data.error) {
             localStorage.setItem("usertoken", response.data);
-            if(payload && payload.isAdmin) localStorage.setItem("user_role", "admin");
-            else if(payload && !payload.isAdmin) localStorage.setItem("user_role", "customer");
+            if(payload && payload.isAdmin) {
+                localStorage.setItem("user_role", "admin");
+            }
+            else if(payload && !payload.isAdmin) {
+                localStorage.setItem("user_role", "customer");
+            }
+
             localStorage.setItem("name", payload.username);
             return response;
         } else {
@@ -89,15 +84,16 @@ export const login = async (useMethod, url, payload = null) => {
 }
 
 export const addCustomService = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
 
-    const response = await axios(config);
     if (!response.data.error) {
         Swal.fire("Successfully Registered!");
         return response
@@ -111,14 +107,16 @@ export const addCustomService = async (useMethod, url, payload = null) => {
 }
 
 export const getCustomerService = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
-    const response = await axios(config);
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
+
     if (response) return response
     else Swal.fire({
         icon: 'error',
@@ -128,15 +126,16 @@ export const getCustomerService = async (useMethod, url, payload = null) => {
 }
 
 export const deleteCustomService = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
-    const response = await axios(config);
-    console.log(response)
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
+    
     if (response && response.data.message) {
         Swal.fire("Successfully Removed!");
         return response;
@@ -150,15 +149,17 @@ export const deleteCustomService = async (useMethod, url, payload = null) => {
 }
 
 export const addAdmin = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
 
-    const response = await axios(config);
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
+
     if (!response.data.error) {
         Swal.fire("Successfully Registered!");
         return response
@@ -172,14 +173,16 @@ export const addAdmin = async (useMethod, url, payload = null) => {
 }
 
 export const getAdmin = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
-    const response = await axios(config);
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
+
     if (response) return response
     else Swal.fire({
         icon: 'error',
@@ -189,15 +192,16 @@ export const getAdmin = async (useMethod, url, payload = null) => {
 }
 
 export const deleteAdmin = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
-    const response = await axios(config);
-    console.log(response)
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
+
     if (response && response.data.message) {
         Swal.fire("Successfully Removed!");
         return response;

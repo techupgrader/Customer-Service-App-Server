@@ -10,7 +10,15 @@ import {
     PaginationItem,
     PaginationLink,
     Table,
+    Button,
 } from "reactstrap";
+
+import BootstrapTable from 'react-bootstrap-table-next';
+import ToolkitProvider, { CSVExport, Search } from 'react-bootstrap-table2-toolkit';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "routes.js";
@@ -18,17 +26,102 @@ import AdminNavbar from "components/Navbars/AdminNavbar";
 
 import { getAllCompany } from "hooks/useCustomerApi";
 
+
 const CompanyList = (props) => {
     const [allCompany, setAllCompany] = useState([]);
     const mainContent = useRef(null);
     const history = useHistory();
 
+    const { ExportCSVButton } = CSVExport;
+    const { SearchBar } = Search;
+
     useEffect(() => {
         getAllCompany("post", "/customer/get-company")
-        .then(res => {
-            if(res.length) setAllCompany(res)
-        })
+            .then(res => {
+                if (res.length) {
+                    res.map((each, index) => {
+                        if(!each.cancellationDate) each.cancellationDate = "";
+                        each.users = 8;
+                        each.action = "Details"
+                    })
+                    setAllCompany(res);
+                }
+            })
     }, [])
+
+    const columns = [{
+        dataField: 'name',
+        text: 'Name',
+        sort: true,
+        headerStyle: {
+            fontSize: '14px',
+            fontWeight: 'bold'
+        },
+        style: () => {
+            return {
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+            }
+        }
+    }, {
+        dataField: 'code',
+        text: 'ACTION CODE',
+        sort: true,
+        headerStyle: {
+            fontSize: '14px',
+            fontWeight: 'bold'
+        }
+    }, {
+        dataField: 'created_at',
+        text: 'CREATED',
+        sort: true,
+        headerStyle: {
+            fontSize: '14px',
+            fontWeight: 'bold'
+        }
+    }, {
+        dataField: 'activationDate',
+        text: 'ACTIVATED',
+        sort: true,
+        headerStyle: {
+            fontSize: '14px',
+            fontWeight: 'bold'
+        }
+    }, {
+        dataField: 'cancellationDate',
+        text: 'EXPIRATION',
+        sort: true,
+        headerStyle: {
+            fontSize: '14px',
+            fontWeight: 'bold'
+        }
+    }, {
+        dataField: 'users',
+        text: 'USERS',
+        sort: true,
+        headerStyle: {
+            fontSize: '14px',
+            fontWeight: 'bold'
+        }
+    }, {
+        dataField: 'action',
+        text: 'ACTION',
+        events: {
+            onClick: (e, column, columnIndex, row, rowIndex) => {
+                companyToDetail(row.id);
+            },
+        },
+        style: (cell, row, rowIndex, colIndex) => {
+            return {
+                cursor: "pointer",
+                color: "#5e72e4"
+            }
+        },
+        headerStyle: {
+            fontSize: '14px',
+            fontWeight: 'bold'
+        }
+    }];
 
     const getBrandText = (path) => {
         for (let i = 0; i < routes.length; i++) {
@@ -44,6 +137,33 @@ const CompanyList = (props) => {
     const companyToDetail = (id) => {
         history.push(`/customer/edit-company/id/${id}`);
     }
+
+    const exportPDF = () => {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
+
+        const marginLeft = 40;
+        const doc = new jsPDF(orientation, unit, size);
+
+        doc.setFontSize(15);
+
+        const title = "Company Listing";
+        const headers = [["NAME", "ACTION CODE", "CREATED DATE", "ACTIVATED DATE", "EXPIRATION DATE", "USERS"]];
+
+        const data = allCompany.map(elt => [elt.name, elt.code, elt.created_at, elt.activationDate, elt.cancellationDate, elt.users]);
+
+        let content = {
+            startY: 50,
+            head: headers,
+            body: data
+        };
+
+        doc.text(title, marginLeft, 40);
+        doc.autoTable(content);
+        doc.save("report.pdf")
+    }
+
 
     return (
         <>
@@ -66,72 +186,33 @@ const CompanyList = (props) => {
                     <Row>
                         <div className="col">
                             <Card className="shadow">
-                                <CardHeader className="border-0">
-                                    <h3 className="mb-0">Administrator table</h3>
+                                <CardHeader className="border-0 pb-0">
+                                    <h3 className="mb-0">Company Listing</h3>
                                 </CardHeader>
-                                <Table className="align-items-center table-flush" responsive>
-                                    <thead className="thead-light">
-                                        <tr>
-                                            <th scope="col" className="text-center" style={{ cursor: "pointer" }}>Name</th>
-                                            <th scope="col" className="text-center" style={{ cursor: "pointer" }}>Activation Code</th>
-                                            <th scope="col" className="text-center" style={{ cursor: "pointer" }}>Created</th>
-                                            <th scope="col" className="text-center" style={{ cursor: "pointer" }}>Activated</th>
-                                            <th scope="col" className="text-center" style={{ cursor: "pointer" }}>Expiration</th>
-                                            <th scope="col" className="text-center" style={{ cursor: "pointer" }}>Users</th>
-                                            <th scope="col" className="text-center" style={{ cursor: "pointer" }}>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {allCompany.map((each, index) => {
-                                            return (<tr key={index}>
-                                                <td className="text-center" style={{ cursor: "pointer" }}>{each.name}</td>
-                                                <td className="text-center" style={{ cursor: "pointer" }}>{each.code}</td>
-                                                <td className="text-center" style={{ cursor: "pointer" }}>{each.created_at}</td>
-                                                <td className="text-center" style={{ cursor: "pointer" }}>{each.activationDate}</td>
-                                                <td className="text-center" style={{ cursor: "pointer" }}>{each.cancellationDate}</td>
-                                                <td className="text-center" style={{ cursor: "pointer" }}>8</td>
-                                                <td className="text-center text-primary" style={{ cursor: "pointer" }} onClick={() => companyToDetail(each.id)}>
-                                                    Details
-                                                </td>
-                                            </tr>)
-                                        })}
-                                    </tbody>
-                                </Table>
+                                <ToolkitProvider
+                                    keyField="id"
+                                    data={allCompany}
+                                    columns={columns}
+                                    exportCSV
+                                    search
+
+                                >
+                                    {
+                                        props => (
+                                            <div>
+                                                <div className="d-flex mb-3 mt-3">
+                                                    <ExportCSVButton {...props.csvProps} className="ml-3 " style={{ width: "10vw", border: "none", background: "rgb(94, 114, 228)" }}>Export CSV</ExportCSVButton>
+                                                    <Button onClick={exportPDF} className="ml-3 text-white" style={{ width: "10vw", border: "none", background: "rgb(94, 114, 228)" }}>Export PDF</Button>
+                                                    <SearchBar {...props.searchProps} className="position-absolute" style={{ right: "1vw", width: "18vw" }} />
+                                                </div>
+                                                <BootstrapTable {...props.baseProps} pagination={paginationFactory()} id="listTable" />
+                                            </div>
+                                        )
+                                    }
+                                </ToolkitProvider>
+
                                 <CardFooter className="py-4">
-                                    <nav aria-label="...">
-                                        <Pagination
-                                            className="pagination justify-content-end mb-0"
-                                            listClassName="justify-content-end mb-0"
-                                        >
-                                            <PaginationItem className="disabled">
-                                                <PaginationLink
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                    tabIndex="-1"
-                                                >
-                                                    <i className="fas fa-angle-left" />
-                                                    <span className="sr-only">Previous</span>
-                                                </PaginationLink>
-                                            </PaginationItem>
-                                            <PaginationItem className="active">
-                                                <PaginationLink
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    1
-                                                </PaginationLink>
-                                            </PaginationItem>
-                                            <PaginationItem>
-                                                <PaginationLink
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    <i className="fas fa-angle-right" />
-                                                    <span className="sr-only">Next</span>
-                                                </PaginationLink>
-                                            </PaginationItem>
-                                        </Pagination>
-                                    </nav>
+
                                 </CardFooter>
                             </Card>
                         </div>

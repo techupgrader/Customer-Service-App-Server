@@ -6,3 +6,53 @@
 .modal-content {
   background: #f5f7f9;
 }
+
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: middle;
+  border-top: 4px dashed;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  border-top: 4px solid\9;
+}
+
+.dropdown > .caret {
+  margin: 10px 0 10px 5px;
+  color: #cccccc;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: middle;
+  border-top: 4px solid\9;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+}
+
+.dropup > .caret {
+  content: "";
+  border-top: 0;
+  border-bottom: 4px dashed;
+  margin: 10px 0;
+  color: #cccccc;
+}
+
+.dropdown-toggle::after {
+  display: inline-block;
+  margin-left: 0.255em;
+  vertical-align: 0.255em;
+  content: "";
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+}
+
+.react-bootstrap-table-pagination {
+  margin: 1vw 0;
+}
+
+.react-bootstrap-table-page-btns-ul {
+  justify-content: end;
+}

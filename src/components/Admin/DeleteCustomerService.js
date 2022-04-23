@@ -17,6 +17,7 @@ import routes from "routes.js";
 import AdminNavbar from "components/Navbars/AdminNavbar";
 
 import { getCustomerService, deleteCustomService } from 'hooks/useApi'
+import Swal from "sweetalert2";
 
 const DeleteCustomerService = (props) => {
     const [allCustomers, setAllCustomers] = useState([]);
@@ -29,12 +30,26 @@ const DeleteCustomerService = (props) => {
     }, [])
 
     const removeCustomService = (username) => {
-        deleteCustomService("post", "/admin/remove-cs", { username: username })
-            .then(res => {
-                if (res && res.data && res.data.allcs) {
-                    setAllCustomers(res.data.allcs);
-                }
-            })
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteCustomService("post", "/admin/remove-cs", { username: username })
+                    .then(res => {
+                        if (res && res.data && res.data.allcs) {
+                            setAllCustomers(res.data.allcs);
+                        }
+                    })
+            } else {
+
+            }
+        })
     }
 
 
@@ -71,7 +86,7 @@ const DeleteCustomerService = (props) => {
                         <div className="col">
                             <Card className="shadow">
                                 <CardHeader className="border-0">
-                                    <h3 className="mb-0">Customer Service table</h3>
+                                    <h3 className="mb-0">Customer Service Listing</h3>
                                 </CardHeader>
                                 <Table className="align-items-center table-flush" responsive>
                                     <thead className="thead-light">
@@ -90,7 +105,11 @@ const DeleteCustomerService = (props) => {
                                                 <td className="text-center" style={{ cursor: "pointer" }}>{each.fName}</td>
                                                 <td className="text-center" style={{ cursor: "pointer" }}>{each.lName}</td>
                                                 <td className="text-center" style={{ cursor: "pointer" }}>{each.username}</td>
-                                                <td className="text-center" style={{ cursor: "pointer" }} onClick={() => removeCustomService(each.username)}>X</td>
+                                                <td className="text-center" style={{ cursor: "pointer" }}
+                                                    onClick={() => removeCustomService(each.username)}
+                                                >
+                                                    X
+                                                </td>
                                             </tr>)
                                         })}
                                     </tbody>

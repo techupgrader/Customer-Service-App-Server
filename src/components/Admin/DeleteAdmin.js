@@ -11,6 +11,8 @@ import {
     Container,
     Row,
 } from "reactstrap";
+import Swal from "sweetalert2";
+
 
 import Sidebar from "components/Sidebar/Sidebar.js";
 import AdminNavbar from "components/Navbars/AdminNavbar";
@@ -30,12 +32,24 @@ const DeleteAdmin = (props) => {
     }, [])
 
     const removeAdmin = (username) => {
-        deleteAdmin("post", "/admin/remove-admin", { username: username })
-            .then(res => {
-                if (res && res.data && res.data.alladmin) {
-                    setAllAdmins(res.data.alladmin);
-                }
-            })
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteAdmin("post", "/admin/remove-admin", { username: username })
+                    .then(res => {
+                        if (res && res.data && res.data.alladmin) {
+                            setAllAdmins(res.data.alladmin);
+                        }
+                    })
+            }
+        })
     }
 
     const getBrandText = (path) => {
@@ -69,7 +83,7 @@ const DeleteAdmin = (props) => {
                         <div className="col">
                             <Card className="shadow">
                                 <CardHeader className="border-0">
-                                    <h3 className="mb-0">Administrator table</h3>
+                                    <h3 className="mb-0">Administrator Listing</h3>
                                 </CardHeader>
                                 <Table className="align-items-center table-flush" responsive>
                                     <thead className="thead-light">

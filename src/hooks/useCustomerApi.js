@@ -21,7 +21,8 @@ export const addNewCompany = async (useMethod, url, payload = null) => {
     const method = useMethod.toLowerCase();
     const config = {
         method,
-        url: `http://localhost:3001${url}`,
+        url: `${url}`,
+        // url: `http://localhost:3001${url}`,
         headers: getTokenHeader()
     }
     if (method !== "get" && payload) config.data = payload
@@ -38,16 +39,39 @@ export const addNewCompany = async (useMethod, url, payload = null) => {
     }
 }
 
-export const getAllCompany = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
+const makeRequest = async (useMethod, url, payload = null) => {
+    try {
+        const method = useMethod.toLowerCase();
+        const config = {
+            method,
+            url: `${url}`,
+            // url: `http://localhost:3001${url}`,
+            headers: getTokenHeader(),
+        }
 
-    const response = await axios(config);
+        if (method !== "get" && payload) {
+            config.data = payload;
+        }
+        
+        const response = await axios(config);
+        return response;
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const getAllCompany = async (useMethod, url, payload = null) => {
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
+
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
     if (!response.data.error) {
         return response.data;
     } else {
@@ -60,15 +84,17 @@ export const getAllCompany = async (useMethod, url, payload = null) => {
 }
 
 export const getOneCompany = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
 
-    const response = await axios(config);
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
+
     if (!response.data.error) {
         return response.data;
     } else {
@@ -81,15 +107,17 @@ export const getOneCompany = async (useMethod, url, payload = null) => {
 }
 
 export const editCompany = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
 
-    const response = await axios(config);
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
+
     if(!response.data.error) {
         Swal.fire({
             title: "Information",
@@ -106,15 +134,17 @@ export const editCompany = async (useMethod, url, payload = null) => {
 }
 
 export const changePassword = async (useMethod, url, payload = null) => {
-    const method = useMethod.toLowerCase();
-    const config = {
-        method,
-        url: `http://localhost:3001${url}`,
-        headers: getTokenHeader()
-    }
-    if (method !== "get" && payload) config.data = payload
+    // const method = useMethod.toLowerCase();
+    // const config = {
+    //     method,
+    //     url: `http://localhost:3001${url}`,
+    //     headers: getTokenHeader()
+    // }
+    // if (method !== "get" && payload) config.data = payload
 
-    const response = await axios(config);
+    // const response = await axios(config);
+    const response = await makeRequest(useMethod, url, payload);
+
     if(!response.data.error) {
         Swal.fire({
             title: "Information",

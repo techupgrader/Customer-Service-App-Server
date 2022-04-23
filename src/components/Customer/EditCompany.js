@@ -229,24 +229,25 @@ const EditCompany = (props) => {
                                 <Row className="justify-content-center">
                                     <Col md="6">
                                         <FormGroup>
-                                            <Label>Activation Date:</Label>
+                                            <Label>Created Date:</Label>
                                             <Input
                                                 className="form-control-alternative"
                                                 type="text"
-                                                value={formData.activationDate}
+                                                value={today}
                                                 readOnly
                                             />
                                         </FormGroup>
                                     </Col>
                                 </Row>
+                                
                                 <Row className="justify-content-center">
                                     <Col md="6">
                                         <FormGroup>
-                                            <Label>Today:</Label>
+                                            <Label>Activation Date:</Label>
                                             <Input
                                                 className="form-control-alternative"
                                                 type="text"
-                                                value={today}
+                                                value={formData.activationDate}
                                                 readOnly
                                             />
                                         </FormGroup>

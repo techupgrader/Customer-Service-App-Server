@@ -22,9 +22,9 @@ const Login = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if(localStorage.usertoken && localStorage.user_role === "admin") {
+    if (localStorage.usertoken && localStorage.user_role === "admin") {
       history.push("/admin/home")
-    } else if(localStorage.usertoken && localStorage.user_role === "customer") {
+    } else if (localStorage.usertoken && localStorage.user_role === "customer") {
       history.push("/customer/home");
     }
   }, [])
@@ -76,6 +76,7 @@ const Login = () => {
                     <InputGroupText>
                       <i className="ni ni-lock-circle-open" />
                     </InputGroupText>
+                    {/* <i className='fa-eye-slash'></i> */}
                   </InputGroupAddon>
                   <Input
                     placeholder="Password"
